@@ -1,0 +1,38 @@
+#+TITLE: Why did I write my own Static Site Generator
+
+* Philisophical Reasons
+- It does exactly what I want, and nothing more
+
+  Its not that any of the one's I've tried are bad, just not what I want.
+  There are so many features I have no need of.
+
+- Fun
+
+  It was small, straightforward task.
+  It had clearly defined goals.
+ 
+
+* Practical Reasons
+- I wanted each page to be completely standalone, or 1 network request per page
+
+  That means to me that each page stores its own CSS
+  Why do this you ask?
+  Mainly because it seemed like a fun idea; its completely possible I will cheat on this in the future
+  For this purpose, I also embed my incredible favicon as a data URI
+  It just means you convert the binary image file into a Base64 encoded string and reference it in the url
+  
+- Very simple templating 
+
+  I want a generic footer and header for posts and that's pretty much it
+  I don't want anything else
+
+- Custom linting
+  
+  I like to have rather strict formatting 
+
+- Format agnostic
+
+  I use [[https://pandoc.org][Pandoc]] to convert between file formats.
+  I generally prefer to use org-mode, but it also works with markdown and many other formats
+  It can also ?normalize? an HTML file, so I can just write a custom HTML file if I want to do some unique formatting for a particular article
+  

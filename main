@@ -1,0 +1,205 @@
+#! /usr/bin/env nix-shell
+#! nix-shell -i fish -p darkhttpd pandoc entr direnv fd fish xxHash file tree
+
+# I tried using Inotifywait, but it kept dropping events for arbitrary reasons
+# It seemed to able to read 1 event per 2 seconds which is dog shit
+# I'm trying a timer with xattrs and xxhash to check if a file has changed
+
+function build-post-index
+	set INDEX_FILE "./out/posts.html"
+    set POSTS_DIR "./out/posts"
+	set SRC_DIR "./src"
+	set FILES (fd --type file --extension html '.' "$POSTS_DIR")
+	set HEAD "
+	 <!DOCTYPE html>
+	 <html>
+	   <head>
+	   <meta charset="utf-8">
+	   <title>Posts Index</title>
+	   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+	 </head>
+	 <body>
+	   <h2>Posts</h2>
+	   <section>
+	     <ul>"
+	echo "$HEAD" > $INDEX_FILE
+	for F in $FILES
+		echo $F
+		set BASENAME (basename $F | rev | cut -d '.' -f 2- | rev)
+		set RELATIVE_PATH (echo $F | cut -c 7-)
+		echo $RELATIVE_PATH
+		printf '<li><a href="%s">%s</a></li>\n' $RELATIVE_PATH $BASENAME >> $INDEX_FILE
+	end
+	set FOOT "
+	    </ul>
+	  </section>
+	</body>
+	</html>"
+	echo "$FOOT" >> $INDEX_FILE
+	build $INDEX_FILE
+end
+
+function build
+    set SRC_DIR "./src"
+    set OUT_DIR "./out"
+    set BUILDING_DIR "./building"
+    set FILES $argv
+    if set -q $FILES
+        set FILES (fd --type file --exclude '\#*\#' --exclude '*components/*' '.' "$SRC_DIR")
+    end
+
+    function _build
+        set INPUT_FILE $argv[1]
+        set REAL_INPUT_FILE (realpath $INPUT_FILE)
+		set INPUT_FILE_EXT (echo $INPUT_FILE | rev | cut -d '.' -f 1 | rev)
+        set OUT_DIR "./out"
+        set SRC_DIR "./src"
+
+        function _pandoc
+            set INPUT_FILE $argv[1]
+            set FROM_FORMAT $argv[2]
+			set OUT_DIR $argv[3]
+			set SRC_DIR $argv[4]
+            set BASENAME (basename $INPUT_FILE | rev | cut -d '.' -f 2- | rev)
+			echo $INPUT_FILE
+			pandoc --to html --self-contained \
+				--toc --toc-depth=2 \
+				--quiet \
+				--email-obfuscation=references \
+				--include-in-header=$SRC_DIR/components/head.html \
+				--include-before-body=$SRC_DIR/components/header.html \
+				--include-after-body=$SRC_DIR/components/footer.html \
+				--css=$SRC_DIR/styles/main.css \
+				--from "$FROM_FORMAT" -o "$OUT_DIR/$BASENAME.html" \
+				"$INPUT_FILE"
+        end
+
+        switch (echo $REAL_INPUT_FILE)
+            case '*/styles/*'
+                mkdir -p "$OUT_DIR/styles"
+				set OUT_DIR "$OUT_DIR/styles"
+            case '*/posts/*'
+                mkdir -p "$OUT_DIR/posts"
+				set OUT_DIR "$OUT_DIR/posts"
+			case '*index.html'
+				echo root file
+            case '*'
+        end
+
+        switch (echo $INPUT_FILE_EXT)
+            case css
+                cp $INPUT_FILE $OUT_DIR/
+            case js
+            case org
+				_pandoc $INPUT_FILE org $OUT_DIR $SRC_DIR
+            case html
+				_pandoc $INPUT_FILE html $OUT_DIR $SRC_DIR
+            case md
+				_pandoc $INPUT_FILE commonmark $OUT_DIR $SRC_DIR
+            case inode/x-empty
+            case '*'
+                echo "<$INPUT_FILE> has <$INPUT_FILE_EXT>, an unused mimetype"
+        end
+
+    end
+
+
+    for F in $FILES
+        _build "$F"
+    end
+end
+
+
+function serve
+    set OUT_DIR "./out"
+    set PID_FILE "./dev-server.pid"
+    if test -e "$PID_FILE"
+        set PIDD (cat $PID_FILE)
+        if set -q $PIDD
+            echo No pid in pidfile
+        else
+            cat $PID_FILE | xargs kill
+        end
+    else
+        echo no pidd
+        #touch "$PID_FILE"
+    end
+    darkhttpd $OUT_DIR \
+        --timeout 5 \
+        --addr 127.0.0.1 \
+        --port 25444 \
+        --pidfile "$PID_FILE" \
+        --daemon &>/dev/null
+end
+
+function on-changed
+    set DIR $argv[1]
+    set PRINT $argv[2]
+    if set -q "$PRINT"
+        set PRINT bool
+    end
+    #while true
+    set FILES (fd --type file '.' $DIR)
+    for F in $FILES
+        set CURRENT_HASH (xxh128sum $F | cut -c 1-32)
+        set OLD_HASH (getfattr --only-values -n 'user.hash.xxhash.128' $F 2> /dev/null)
+        if test "$CURRENT_HASH" = 99aa06d3014798d86001c324468d497f
+        else if test "$CURRENT_HASH" = "$OLD_HASH"
+        else
+            setfattr -n 'user.hash.xxhash.128' -v "$CURRENT_HASH" $F
+            if test "$PRINT" = files
+                printf '%s\n' $F
+            else if test "$PRINT" = bool
+                printf '%s\n' "true"
+                break
+            else            
+            end
+		
+        end
+    end
+ 
+    #sleep "0.2s"
+    #end
+end
+
+function dev-server
+    set SRC_DIR "./src"
+	echo Built site
+	build
+	echo Built posts index
+	build-post-index
+    echo Dev server started
+	serve
+    while true
+        set CHANGED_FILES (on-changed "$SRC_DIR" bool)
+        if test "$CHANGED_FILES" = "true"
+			echo Changed
+            build
+			build-post-index
+            serve
+        end
+        set CHANGED_FILES
+        sleep "0.2s"
+    end
+end
+
+function main
+    switch (echo $argv[1])
+		case build-post-index
+			build-post-index
+        case serve
+            serve
+        case on-changed
+            on-changed $argv[2..]
+        case build
+            build
+        case dev-server
+            dev-server
+        case ''
+            dev-server
+        case '*'
+			echo "<$argv[1]> is not a cmd"
+    end
+end
+
+main $argv
