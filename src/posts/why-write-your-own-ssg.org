@@ -5,11 +5,12 @@
 
   Its not that any of the one's I've tried are bad, just not what I want.
   There are so many features I have no need of.
-
+  I've used [[https://gohugo.io/][Hugo]] in the past, and it worked just fine, but it still felt like so much more than I needed.
+  
 - Fun
 
   It was small, straightforward task.
-  It had clearly defined goals.
+  It had a nice, clearly defined end goal.
  
 
 * Practical Reasons

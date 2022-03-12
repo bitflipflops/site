@@ -1,0 +1,61 @@
+#+TITLE: Ephemeral Nixos
+
+* Why
+** Security
+
+When all data is not-persisted by default, it reduces the ability of malicious software to persist itself.
+Now, there are of course still ways that this can be gotten around and should not be used in isolation.
+
+** Convenience
+
+You might be surprised, but I generally consider it easier to work with.
+
+It also makes new system installs very easy, after you have customized a Nixos image.
+You get your config files onto the new system, generate a local hardware config and rebuild.
+If you have properly setup , it will just work.
+
+* Warnings
+** Sizing your root partition
+
+By default, I sized my root partition to 2GB, as recommended.
+However when I tried to compile [[https://github.com/coqui-ai/TTS][Coqui-AI Text-To-Speech]], the root partition ran out of space.
+I increased the size of the root partition to 4GB, and it still failed.
+6GB seemed to be large enough.
+Now, my desktop has 32GBs of ram, so I am not worried about the space but your mileage may vary.
+
+* How
+** Build a Custom Image
+
+You can use the base image, but its a bit more difficult to setup the system.
+
+** Basic Configuration
+
+Setup the root dir
+#+BEGIN_SRC nix
+  fileSystems."/" =
+    { device = "none";
+      fsType = "tmpfs";
+      options = [ "defaults" "size=6G" "mode=755" ];
+    };
+#+END_SRC
+
+Make sure you hash your password
+#+BEGIN_SRC sh
+  mkpasswd -m sha-512
+#+END_SRC
+
+Turning off 'mutableUsers' overwrites /etc/passwd and /etc/group on boot
+Since you're already doing that, it'd be weird not to turn it off 
+Configure your root user 
+#+BEGIN_SRC nix
+users.mutableUsers = false;
+users.users.root = {
+    initialHashedPassword = "<SHA-512-HASH>";
+};
+#+END_SRC
+
+* Links
+- [[https://christine.website/blog/paranoid-nixos-2021-07-18][Paranoid NixOS]]
+- [[https://elis.nu/blog/2020/05/nixos-tmpfs-as-root/][Nixos TMPFS as Root]]
+- [[https://elis.nu/blog/2020/06/nixos-tmpfs-as-home/][Nixos TMPFS as Home]]
+- [[https://github.com/nix-community/impermanence][Impermanence]]

@@ -1,11 +1,11 @@
 #! /usr/bin/env nix-shell
-#! nix-shell -i fish -p darkhttpd pandoc entr direnv fd fish xxHash file tree
+#! nix-shell -i fish -p darkhttpd pandoc entr direnv fd fish xxHash file tree netlify-cli git curl
 
 # I tried using Inotifywait, but it kept dropping events for arbitrary reasons
 # It seemed to able to read 1 event per 2 seconds which is dog shit
 # I'm trying a timer with xattrs and xxhash to check if a file has changed
 
-function build-post-index
+function build-post-index --description "Builds human-focused index of sites posts"
 	set INDEX_FILE "./out/posts.html"
     set POSTS_DIR "./out/posts"
 	set SRC_DIR "./src"
@@ -37,6 +37,71 @@ function build-post-index
 	</html>"
 	echo "$FOOT" >> $INDEX_FILE
 	build $INDEX_FILE
+end
+
+function build-sitemap --description "Builds txt sitemap for Google search index"
+	set DIR "./out"
+	set ROOT_URL "https://bitflipflops.com"
+	set HTML_FILES (fd --extension html --type file --base-directory "$DIR" '.')
+	set SITEMAP "$DIR/sitemap.txt"
+	echo -n "" > $SITEMAP
+	for F in $HTML_FILES
+		set CF (echo $F | cut -c 3-)
+		set URL "$ROOT_URL/$CF"
+		echo "$URL" >> $SITEMAP
+	end
+	# Check that sitemaps is less than 50MB, because that is google's supposed hard limit 
+	set SITEMAP_SIZE (du --bytes $SITEMAP | cut -f1)
+	if test $SITEMAP_SIZE -ge 50000000
+		echo Sitemap is too big
+		return 1
+	else
+		echo Sitemap is good
+	end
+end
+
+function test-site
+	set -g URL $argv[1]
+	if set -q $URL
+		set -g URL "https://bitflipflops.com"
+	end
+
+	# Counts errors
+	set ERRORS 0
+
+	function page-is-up
+		set PAGE $argv[1]
+		set STATUS_CODE (curl -s -o /dev/null -w "%{http_code}\n" $PAGE)
+		switch (echo $STATUS_CODE)
+			case '200'
+			case '400' '404'
+				echo error
+				return 1
+			case ''
+			case '*'
+				echo "<$STATUS_CODE> is an unknown status code"
+		end
+		return 0
+	end
+
+	# Check root url
+	if not page-is-up $URL
+		set ERRORS (math $ERRORS + 1)
+	end
+
+	# Check always-404 url
+	set ALWAYS_404 "$URL/744e8634-6143-4c1a-855a-f5a997a9da2e"
+	if page-is-up $ALWAYS_404
+		set ERRORS (math $ERRORS + 1)
+	end
+
+	if test $ERRORS -eq 0
+		echo 'Yay no errors recorded'
+		return 0
+	else
+		echo "Boo, <$ERRORS> Errors recorded"
+		return 1
+	end
 end
 
 function build
@@ -76,8 +141,8 @@ function build
 
         switch (echo $REAL_INPUT_FILE)
             case '*/styles/*'
-                mkdir -p "$OUT_DIR/styles"
-				set OUT_DIR "$OUT_DIR/styles"
+                #mkdir -p "$OUT_DIR/styles"
+				#set OUT_DIR "$OUT_DIR/styles"
             case '*/posts/*'
                 mkdir -p "$OUT_DIR/posts"
 				set OUT_DIR "$OUT_DIR/posts"
@@ -88,7 +153,8 @@ function build
 
         switch (echo $INPUT_FILE_EXT)
             case css
-                cp $INPUT_FILE $OUT_DIR/
+				echo "CSS should be embedded in every HTML file already"
+              #  cp $INPUT_FILE $OUT_DIR/
             case js
             case org
 				_pandoc $INPUT_FILE org $OUT_DIR $SRC_DIR
@@ -185,6 +251,10 @@ end
 
 function main
     switch (echo $argv[1])
+		case 'test' 'test-site'
+			test-site $argv[2..]
+		case build-sitemap
+			build-sitemap
 		case build-post-index
 			build-post-index
         case serve

@@ -1,0 +1,49 @@
+#+TITLE: Why you should consider Nix/Nixos
+
+* Nix
+** About
+
+
+** Pros
+
+- Functional Language
+
+  I like functional coding style, even if I am still learning it.
+  Unlike object-orientated, I actually understand the why of it.
+
+** Cons
+
+- My brain cannot decide if its a coding language xor a configuration language
+
+  I can't explain it more than that, it just feels funky.
+
+
+* Nixos is a Linux distro built around the Nix language
+** About
+
+
+** Pros
+
+- Static Configuration
+
+  Becuase the entire system is configured through 1 system, its easy to completely configure an app in a.
+  So
+
+- [[file:./ephemeral-nixos.html][Ephemeral Nixos]]
+
+  Its that your root partition is on a tmpfs, except for the nix store and configuration dir.
+  Since Nixos rebuilds its state from just those directories, you only need the core Nixos repos. 
+  If you are also interested in trying it, Nixos is really your only option. (to my knowledge)   
+  
+- 1 syntax format
+
+  You can configure [[https://search.nixos.org/options?channel=unstable&from=0&size=50&sort=relevance&type=packages&query=systemd][SystemD]], [[https://search.nixos.org/options?channel=unstable&from=0&size=50&sort=relevance&type=packages&query=httpd][Apache HTTPD]], or [[https://search.nixos.org/options?channel=unstable&show=services.yggdrasil.config&from=0&size=50&sort=relevance&type=packages&query=yggdrasil][Yggdrasil]] all from your nixos files.
+  
+** Cons
+
+- Packages are somtimes slower to be upgraded
+
+  This was my main reason for switching from Nixos to Arch in the past.
+  However, I am no longer interested in running bleed-edge software, so its no longer an issue for me.
+
+- 

@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="generator" content="pandoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-  <title>Why did I write my own Static Site Generator</title>
+  <title>Why you should consider Nix/Nixos</title>
   <style>
     code{white-space: pre-wrap;}
     span.smallcaps{font-variant: small-caps;}
@@ -23,31 +23,52 @@
 <body>
 
 <header id="title-block-header">
-<h1 class="title">Why did I write my own Static Site Generator</h1>
+<h1 class="title">Why you should consider Nix/Nixos</h1>
 </header>
 <nav id="TOC" role="doc-toc">
 <ul>
-<li><a href="#philisophical-reasons">Philisophical Reasons</a></li>
-<li><a href="#practical-reasons">Practical Reasons</a></li>
+<li><a href="#nix">Nix</a>
+<ul>
+<li><a href="#about">About</a></li>
+<li><a href="#pros">Pros</a></li>
+<li><a href="#cons">Cons</a></li>
+</ul></li>
+<li><a href="#nixos-is-a-linux-distro-built-around-the-nix-language">Nixos is a Linux distro built around the Nix language</a>
+<ul>
+<li><a href="#about-1">About</a></li>
+<li><a href="#pros-1">Pros</a></li>
+<li><a href="#cons-1">Cons</a></li>
+</ul></li>
 </ul>
 </nav>
-<h1 id="philisophical-reasons">Philisophical Reasons</h1>
+<h1 id="nix">Nix</h1>
+<h2 id="about">About</h2>
+<h2 id="pros">Pros</h2>
 <ul>
-<li><p>It does exactly what I want, and nothing more</p>
-<p>Its not that any of the one&#39;s I&#39;ve tried are bad, just not what I want. There are so many features I have no need of. I&#39;ve used <a href="https://gohugo.io/">Hugo</a> in the past, and it worked just fine, but it still felt like so much more than I needed.</p></li>
-<li><p>Fun</p>
-<p>It was small, straightforward task. It had a nice, clearly defined end goal.</p></li>
+<li><p>Functional Language</p>
+<p>I like functional coding style, even if I am still learning it. Unlike object-orientated, I actually understand the why of it.</p></li>
 </ul>
-<h1 id="practical-reasons">Practical Reasons</h1>
+<h2 id="cons">Cons</h2>
 <ul>
-<li><p>I wanted each page to be completely standalone, or 1 network request per page</p>
-<p>That means to me that each page stores its own CSS Why do this you ask? Mainly because it seemed like a fun idea; its completely possible I will cheat on this in the future For this purpose, I also embed my incredible favicon as a data URI It just means you convert the binary image file into a Base64 encoded string and reference it in the url</p></li>
-<li><p>Very simple templating</p>
-<p>I want a generic footer and header for posts and that&#39;s pretty much it I don&#39;t want anything else</p></li>
-<li><p>Custom linting</p>
-<p>I like to have rather strict formatting</p></li>
-<li><p>Format agnostic</p>
-<p>I use <a href="https://pandoc.org">Pandoc</a> to convert between file formats. I generally prefer to use org-mode, but it also works with markdown and many other formats It can also ?normalize? an HTML file, so I can just write a custom HTML file if I want to do some unique formatting for a particular article</p></li>
+<li><p>My brain cannot decide if its a coding language xor a configuration language</p>
+<p>I can&#39;t explain it more than that, it just feels funky.</p></li>
+</ul>
+<h1 id="nixos-is-a-linux-distro-built-around-the-nix-language">Nixos is a Linux distro built around the Nix language</h1>
+<h2 id="about-1">About</h2>
+<h2 id="pros-1">Pros</h2>
+<ul>
+<li><p>Static Configuration</p>
+<p>Becuase the entire system is configured through 1 system, its easy to completely configure an app in a. So</p></li>
+<li><p><a href="./ephemeral-nixos.html">Ephemeral Nixos</a></p>
+<p>Its that your root partition is on a tmpfs, except for the nix store and configuration dir. Since Nixos rebuilds its state from just those directories, you only need the core Nixos repos. If you are also interested in trying it, Nixos is really your only option. (to my knowledge)</p></li>
+<li><p>1 syntax format</p>
+<p>You can configure <a href="https://search.nixos.org/options?channel=unstable&amp;from=0&amp;size=50&amp;sort=relevance&amp;type=packages&amp;query=systemd">SystemD</a>, <a href="https://search.nixos.org/options?channel=unstable&amp;from=0&amp;size=50&amp;sort=relevance&amp;type=packages&amp;query=httpd">Apache HTTPD</a>, or <a href="https://search.nixos.org/options?channel=unstable&amp;show=services.yggdrasil.config&amp;from=0&amp;size=50&amp;sort=relevance&amp;type=packages&amp;query=yggdrasil">Yggdrasil</a> all from your nixos files.</p></li>
+</ul>
+<h2 id="cons-1">Cons</h2>
+<ul>
+<li><p>Packages are somtimes slower to be upgraded</p>
+<p>This was my main reason for switching from Nixos to Arch in the past. However, I am no longer interested in running bleed-edge software, so its no longer an issue for me.</p></li>
+<li></li>
 </ul>
 <footer>
   <div>I am the default footer</div>
