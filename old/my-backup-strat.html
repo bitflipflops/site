@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<HTML lang="en">
+<HEAD>
+  <META charset="utf-8">
+  <META name="viewport" content="width=device-width, initial-scale=1">
+  <TITLE>My Backup Strategy</TITLE>
+  <META name="description" content="A reasonably safe backup system">
+  <META name="author" content="Adam Michel Holdnack">
+  <link rel="stylesheet" href="./../main.css">
+</HEAD>
+<body>
+  <section>
+    <h3>My Needs</h3>
+    <ul>
+      <li>Reasonable Price</li>
+      <li>Encrypted before Storage</li>
+      <li>Well Maintained</li>
+      <li>Open Source</li>
+      <li>Easy Shell Scripting</li>
+    </ul>
+    <h3>My Wants</h3>
+    <ul>
+      <li>Deduplicated, saves me money</li>
+      <li>Compressed, saves me money</li>
+    </ul>
+  </section>
+  <section>
+    <h3>Options</h3>
+    <h4>Programs</h4>
+    <ul>
+      <li><div>Rclone+My Own Script</div></li>
+      <li><div>ZFS</div></li>
+      <li><div>BorgBackup</div></li>
+    </ul>
+    <h4>Providers</h4>
+    <ul>
+      <li>
+        <div>
+          <a href="https://www.backblaze.com/b2/cloud-storage.html">Backblaze B2</a>
+          No base storage requirement
+          $0.005 per GB per Month
+          $0.01 per GB Download
+          So for 100GB per year with 1 full restore, it would be $6 USD for storage and $1 dollar for download
+          Definitely the cheapest option
+        </div>
+      </li>
+      <li>
+        <div>
+          <a href="https://www.rsync.net/pricing.html">Rsync.net(ZFS)</a>
+          400 GB base requirement
+          $120 USD per year for the base requirement
+          A bit excessive for my use
+          I've also seen some issues with encrypted send and receive, which I would need
+        </div>
+      </li>
+      <li>
+        <div>
+          <a href="https://www.rsync.net/products/borg.html">Rsync.net(BorgBackup)</a>
+          I trust their support more than B2
+          I'm not trying to dis B2, I can just tell from Rsync's site that Unix nerds are their target audience
+          No Ingress XOR Egress fees
+          100 GB base requirement
+          $18 USD per year for the base requirement
+        </div>
+      </li>
+    </ul>
+  </section>
+  <section>
+    <h3>My Solution</h3>
+    <h4>Main</h4>
+    <p>
+      I use BorgBackup to Rsync.net.
+      I am shocked by the amount compression and deduplication reduces storage space used.
+      I had around 40 GB raw data, and it shrinks down to 7 GB actually stored.
+      I am still working out some kinks in my script.
+      Sometimes Borg just hangs on a file and I have no idea why.
+      I noticed it on a plain text config file.
+      It also seems to have issues with large folders, for example my home dir.
+      And I do have excludes for local caches and the like.
+      I get around it for now with more granular archives.
+    </p>
+    <h4>Local NAS</h4>
+    <p>
+      I don't currently have a NAS, because I am moving and I don't want more stuff that I need to shuffle around.
+      I am looking at grabbing a thin client after I get settled in to my new place.
+      Yes, it won't have ECC memory, but at my price point nothing would.
+      I am thinking that I will use 1 VDEV at RaidZ3, so 1 drive can die out of 3.
+      I am planning on 2 TB drives to give me some good breathing room.
+    </p>
+    <h4>Rclone to B2 from Rsync.net</h4>
+    <p>
+      The main reason is to save my own bandwidth.
+      They will also have much more throughput then me.
+      They have s3cmd installed locally as well, and I imagine that can interface with B2 just fine.
+    </p>
+  </section>
+</body>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <META charset="utf-8">
+  <META name="viewport" content="width=device-width, initial-scale=1">
+  <TITLE>Common Lisp in 2022</TITLE>
+  <META name="description" content="A why on an old, crusty language">
+  <META name="author" content="Adam Michel Holdnack">
+  <link rel="stylesheet" href="./../main.css">
+  <!-- Used for testing in dev-->
+  <script type="text/javascript" src="./../auto-reload.js"></script>
+</head>
+<body onload = "JavaScript:AutoRefresh(22000);">
+  <h1>Common Lisp in 2022</h1>
+  <section>
+    <h3>Positives</h3>
+    <h4>Low Syntax</h4>
+    <p>
+      I often get distracted and overwhelmed when I need to memorize a bunch of syntax right away.
+      Its 1 of the many reasons I have problems Haskell. 
+    </p>
+    <h4>Homoiconicity</h4>
+    <p>
+      <a href="https://en.wikipedia.org/wiki/Homoiconicity">Homoiconicity</a> simply means that code and data are the same thing.
+      It took me a while to get how useful a concept this is.
+      Combining this with <a href="https://en.wikipedia.org/wiki/Referential_transparency">Referential transparency</a> enables me to easily reason about programs.
+      
+    </p>
+    <h4>Small Community</h4>
+    <p>
+      This can be a bit of a double-edged sword, but I generally consider it a positive.
+      It means that pretty much anyone using it wants to be using it.
+      It also means that many of the users are much more generally experienced in programming than a more common language.
+      The main disadvantages are the number of libraries available and the available learning resources.
+    </p>
+    <h4>Stability</h4>
+    <p>
+      The Common Lisp spec is fucking old and even if magically a knew spec is created, I'm betting on my old code still working.
+      This also has the advantage that code older than a few years will probably still work just fine.
+      To see why that is important, look at Python (just as 1 example among many, if you love Python).
+      Even ignoring the move from Python2 to Python3, differing versions break things surprisingly quickly.
+      You do need to pay attention to which implementation of Common Lisp that the code was written for.
+      They are all broadly the same, but its all the little differences that fuck you.
+    </p>
+    <h4>Its REPL</h4>
+    <p>
+      I am using Emacs and <a href="https://github.com/joaotavora/sly">sly</a> as my dev environment.
+      Out of the box, its really nice and reasonably intuitive.
+      I can just hit ctrl-c ctrl-k, and ta-dah the current buffer is compiled and loaded into the running lisp instance.  
+      You can also quickly just compile and load a region,
+    </p>
+    <section>
+      <h4>Cool Weird Features</h4>
+      <h5>Lisp Images</h5>
+      <p>
+        A lisp image is pretty much a core dump of a running instance of lisp.
+        It's most obvious benefit is that you can run a very expensive computation once and then just save the image.
+        Then you can just reload the image and bippity boopity, you can just use the result of the computation.
+        <a href="http://www.sbcl.org/manual/#Saving-a-Core-Image">SBCL Manual</a>
+      </p>
+      <h5>Macros</h5>
+      <p>
+        If there is a feature known about lisps, its their macros.
+        There just code that produces more code.
+        But goddamn are they powerful.
+      </p>
+    </section>
+    <section>
+      <h4>Cool shit written in Common Lisp</h4>
+      <h5><a href="https://github.com/orthecreedence/wookie">Wookie</a></h5>
+      <p>
+        Wookie had some of the lowest latency I have ever seen on a website.
+        However, its site has gone down since I first looked at it.
+      </p>
+    </section>
+  </section>
+  <section>
+    <h3>Negatives</h3>
+    <h4>Format</h4>
+    <p>
+      It is real esoteric and cryptic as fuck.
+      Why are there so many tildes?
+    </p>
+  </section>
+</body>
