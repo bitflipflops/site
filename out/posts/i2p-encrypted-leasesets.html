@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="generator" content="pandoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-  <title>Why did I write my own Static Site Generator</title>
+  <title>Encrypted Lease-sets in I2P</title>
   <style>
     code{white-space: pre-wrap;}
     span.smallcaps{font-variant: small-caps;}
@@ -23,31 +23,61 @@
 <body>
 
 <header id="title-block-header">
-<h1 class="title">Why did I write my own Static Site Generator</h1>
+<h1 class="title">Encrypted Lease-sets in I2P</h1>
 </header>
 <nav id="TOC" role="doc-toc">
 <ul>
-<li><a href="#philisophical-reasons">Philisophical Reasons</a></li>
-<li><a href="#practical-reasons">Practical Reasons</a></li>
+<li><a href="#what-are-encrypted-lease-sets">What are Encrypted Lease-sets?</a></li>
+<li><a href="#why-use-encrypted-lease-sets">Why use Encrypted Lease-sets?</a>
+<ul>
+<li><a href="#completely-private-services">Completely Private Services</a></li>
+</ul></li>
+<li><a href="#how-to-use-encrypted-lease-sets">How to use Encrypted Lease-sets</a>
+<ul>
+<li><a href="#general">General</a></li>
+<li><a href="#options">Options</a></li>
+<li><a href="#examples">Examples</a></li>
+<li><a href="#constraints">Constraints</a></li>
+</ul></li>
+<li><a href="#links">Links</a></li>
 </ul>
 </nav>
-<h1 id="philisophical-reasons">Philisophical Reasons</h1>
+<h1 id="what-are-encrypted-lease-sets">What are Encrypted Lease-sets?</h1>
+<p>A lease-set are how I2P connects between clients. They contain data on how to connect to a particular tunnel and metadata around that connection. The core piece of data stored in lease-sets are [<a href="https://geti2p.net/spec/common-structures#destination">https://geti2p.net/spec/common-structures#destination</a>][destinations], or I2P&#39;s address type.</p>
+<h1 id="why-use-encrypted-lease-sets">Why use Encrypted Lease-sets?</h1>
+<h2 id="completely-private-services">Completely Private Services</h2>
+<p>If you properly setup an encrypted lease-set, its the most private way to connect 2 machines over the internet. There is no reasonable way to guess the actual destination behind the hashed key that is stored in the network db. Obviously, all these statements assume that there are no vulnerabilities in the implementation of the specification. I am not equipped to audit either I2P or I2PD, but I do generally trust these implementations.</p>
+<h1 id="how-to-use-encrypted-lease-sets">How to use Encrypted Lease-sets</h1>
+<h2 id="general">General</h2>
+<p>You will first need something you want to host. It can be pretty much anything, but I will use an SSH server as my example, because it is my test case. I am looking to setup an rsync server over I2P [<a href="file:rsync-over-i2p.org">file:rsync-over-i2p.org</a>][] The main constraints behind hosting something through I2P is first latency and a fairly far second, throughput. By the design of the network itself, anything that is heavily effected by latency will be hurt by being run through I2P. I do read a post about running video-chat apps through Tor, and it claimed it wasn&#39;t terrible. ?FIND LINK TO POST?</p>
+<h2 id="options">Options</h2>
+<h3 id="hop-length">Hop ?Length?</h3>
+<p>By default, I2P uses 3 hops each way for a connection, so 6 per round trip. For my use-case, I am dropping that down to 2 per connection for a few reasons. The main reason is that SSH is pretty heavily latency-?bound?, so the reduced round-trips are valuable. The other reason is that in my particular instance I am not concerned about the reduction in anonymity. I am not deeply concerned if a malevolent actor finds out I am accessing machines I own through SSH. If I was doing something riskier, I would definitely keep the 3 hops and would even consider increasing it to 4 hops per connection.</p>
+<h2 id="examples">Examples</h2>
+<pre id="I2PD" class="conf"><code>[encrypted]
+type=http
+host=127.0.0.1
+port=80
+inport=80
+gzip=false
+# Stated that this is the only correct key-type option
+signaturetype=11
+keys=encrypted.dat
+# This is the setting that actually marks the lease-set as encrypted
+i2cp.leaseSetType=5
+</code></pre>
+<h2 id="constraints">Constraints</h2>
+<h3 id="only-for-server-tunnels-of-particular-types">Only for Server Tunnels of particular types</h3>
+<p>Can only have &#39;server&#39;, &#39;http&#39; or &#39;irc&#39; types I don&#39;t know the technical reason behind this</p>
+<h3 id="potentially-having-your-connection-be-blocked">Potentially having your Connection be Blocked</h3>
+<p>I am aware the that the first ?3? packets that I2P sends are &#39;static/always the same&#39;, so theoretically networks can block I2P connections. I personally haven&#39;t had it happen to me, but here&#39;s a warning.</p>
+<h1 id="links">Links</h1>
 <ul>
-<li><p>It does exactly what I want, and nothing more</p>
-<p>Its not that any of the one&#39;s I&#39;ve tried are bad, just not what I want. There are so many features I have no need of. I&#39;ve used <a href="https://gohugo.io/">Hugo</a> in the past, and it worked just fine, but it still felt like so much more than I needed.</p></li>
-<li><p>Fun</p>
-<p>It was small, straightforward task. It had a nice, clearly defined end goal.</p></li>
-</ul>
-<h1 id="practical-reasons">Practical Reasons</h1>
-<ul>
-<li><p>I wanted each page to be completely standalone, or 1 network request per page</p>
-<p>That means to me that each page stores its own CSS Why do this you ask? Mainly because it seemed like a fun idea; its completely possible I will cheat on this in the future For this purpose, I also embed my incredible favicon as a data URI It just means you convert the binary image file into a Base64 encoded string and reference it in the url</p></li>
-<li><p>Very simple templating</p>
-<p>I want a generic footer and header for posts and that&#39;s pretty much it I don&#39;t want anything else</p></li>
-<li><p>Custom linting</p>
-<p>I like to have rather strict formatting</p></li>
-<li><p>Format agnostic</p>
-<p>I use <a href="https://pandoc.org">Pandoc</a> to convert between file formats. I generally prefer to use org-mode, but it also works with markdown and many other formats It can also ?normalize? an HTML file, so I can just write a custom HTML file if I want to do some unique formatting for a particular article</p></li>
+<li>[<a href="https://geti2p.net/en/blog/post/2021/09/07/Level-Up-Encrypted-Leasesets">https://geti2p.net/en/blog/post/2021/09/07/Level-Up-Encrypted-Leasesets</a>][Post on I2P Blog]</li>
+<li>[<a href="https://habr.com/ru/post/555604/">https://habr.com/ru/post/555604/</a>][Write-Up in Russian]</li>
+<li>[<a href="https://github.com/PurpleI2P/i2pd/wiki/Publish-encrypted-LeaseSet">https://github.com/PurpleI2P/i2pd/wiki/Publish-encrypted-LeaseSet</a>][I2PD Docs]</li>
+<li>[<a href="https://geti2p.net/en/docs/how/network-database">https://geti2p.net/en/docs/how/network-database</a>][Core doc on the NetDB]</li>
+<li>[<a href="https://geti2p.net/spec/proposals/123-new-netdb-entries">https://geti2p.net/spec/proposals/123-new-netdb-entries</a>][I2P Proposal were the current version of Encrypted Lease-sets was introduced]</li>
 </ul>
 <footer>
   <div>I am the default footer</div>

@@ -1,0 +1,26 @@
+#+TITLE: Rsync over I2P
+
+* Why?
+** Ignore NAT and Roaming
+This is my main reason for using I2P.
+I've trialed using [][Yggrisal], an end-to-end encrypted mesh network, in the past but I had some odd issues.
+The main reason I didn't continue using it was that the Android app would arbitrarly drop connections and need to be restarted.
+I assume it has something to do with Android's sleep funtionality, but the problem persisted even when I disabled sleep for it.
+
+** Mutual Authentication
+
+** Hidden
+I like having anonymity, I think it should be the default in all online interactions.
+However, hidden in this instance is much more broad then anonymity.
+I also mean that its not going to be hit by script kiddies' scans constantly.
+If you run anything on the clearnet, you know that it is constantly being scanned.
+Hmm, I imagine IPv6 is scanned by less bots and is definitely scanned slower then IPv4, but you cannot actually use only IPv6 as of 2022.
+
+
+
+So running my personal services through I2P, even without an encrypted lease-set, massively reduces the attack surface.
+
+
+?I've also considered just using I2P to connect machines, but the actually data is not sent through it.
+So, I could run a private torrent tracker for all my personal files only on I2P, but have the torrents not be I2P itself.
+But I digress.?

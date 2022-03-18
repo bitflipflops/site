@@ -4,6 +4,7 @@
 # I tried using Inotifywait, but it kept dropping events for arbitrary reasons
 # It seemed to able to read 1 event per 2 seconds which is dog shit
 # I'm trying a timer with xattrs and xxhash to check if a file has changed
+ 
 
 function build-post-index --description "Builds human-focused index of sites posts"
 	set INDEX_FILE "./out/posts.html"
@@ -196,6 +197,14 @@ function serve
         --port 25444 \
         --pidfile "$PID_FILE" \
         --daemon &>/dev/null
+end
+
+function _docs
+	set OUT_DIR './out'
+	set FILES (fd --type file '.' $OUT_DIR)
+	for F in $FILES
+		ln $F ./docs/
+	end
 end
 
 function on-changed

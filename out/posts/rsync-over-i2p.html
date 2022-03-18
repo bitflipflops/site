@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="generator" content="pandoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-  <title>Why did I write my own Static Site Generator</title>
+  <title>Rsync over I2P</title>
   <style>
     code{white-space: pre-wrap;}
     span.smallcaps{font-variant: small-caps;}
@@ -23,32 +23,26 @@
 <body>
 
 <header id="title-block-header">
-<h1 class="title">Why did I write my own Static Site Generator</h1>
+<h1 class="title">Rsync over I2P</h1>
 </header>
 <nav id="TOC" role="doc-toc">
 <ul>
-<li><a href="#philisophical-reasons">Philisophical Reasons</a></li>
-<li><a href="#practical-reasons">Practical Reasons</a></li>
+<li><a href="#why">Why?</a>
+<ul>
+<li><a href="#ignore-nat-and-roaming">Ignore NAT and Roaming</a></li>
+<li><a href="#mutual-authentication">Mutual Authentication</a></li>
+<li><a href="#hidden">Hidden</a></li>
+</ul></li>
 </ul>
 </nav>
-<h1 id="philisophical-reasons">Philisophical Reasons</h1>
-<ul>
-<li><p>It does exactly what I want, and nothing more</p>
-<p>Its not that any of the one&#39;s I&#39;ve tried are bad, just not what I want. There are so many features I have no need of. I&#39;ve used <a href="https://gohugo.io/">Hugo</a> in the past, and it worked just fine, but it still felt like so much more than I needed.</p></li>
-<li><p>Fun</p>
-<p>It was small, straightforward task. It had a nice, clearly defined end goal.</p></li>
-</ul>
-<h1 id="practical-reasons">Practical Reasons</h1>
-<ul>
-<li><p>I wanted each page to be completely standalone, or 1 network request per page</p>
-<p>That means to me that each page stores its own CSS Why do this you ask? Mainly because it seemed like a fun idea; its completely possible I will cheat on this in the future For this purpose, I also embed my incredible favicon as a data URI It just means you convert the binary image file into a Base64 encoded string and reference it in the url</p></li>
-<li><p>Very simple templating</p>
-<p>I want a generic footer and header for posts and that&#39;s pretty much it I don&#39;t want anything else</p></li>
-<li><p>Custom linting</p>
-<p>I like to have rather strict formatting</p></li>
-<li><p>Format agnostic</p>
-<p>I use <a href="https://pandoc.org">Pandoc</a> to convert between file formats. I generally prefer to use org-mode, but it also works with markdown and many other formats It can also ?normalize? an HTML file, so I can just write a custom HTML file if I want to do some unique formatting for a particular article</p></li>
-</ul>
+<h1 id="why">Why?</h1>
+<h2 id="ignore-nat-and-roaming">Ignore NAT and Roaming</h2>
+<p>This is my main reason for using I2P. I&#39;ve trialed using [][Yggrisal], an end-to-end encrypted mesh network, in the past but I had some odd issues. The main reason I didn&#39;t continue using it was that the Android app would arbitrarly drop connections and need to be restarted. I assume it has something to do with Android&#39;s sleep funtionality, but the problem persisted even when I disabled sleep for it.</p>
+<h2 id="mutual-authentication">Mutual Authentication</h2>
+<h2 id="hidden">Hidden</h2>
+<p>I like having anonymity, I think it should be the default in all online interactions. However, hidden in this instance is much more broad then anonymity. I also mean that its not going to be hit by script kiddies&#39; scans constantly. If you run anything on the clearnet, you know that it is constantly being scanned. Hmm, I imagine IPv6 is scanned by less bots and is definitely scanned slower then IPv4, but you cannot actually use only IPv6 as of 2022.</p>
+<p>So running my personal services through I2P, even without an encrypted lease-set, massively reduces the attack surface.</p>
+<p>?I&#39;ve also considered just using I2P to connect machines, but the actually data is not sent through it. So, I could run a private torrent tracker for all my personal files only on I2P, but have the torrents not be I2P itself. But I digress.?</p>
 <footer>
   <div>I am the default footer</div>
 </footer>

@@ -1,0 +1,63 @@
+#+TITLE: Encrypted Lease-sets in I2P
+
+* What are Encrypted Lease-sets?
+A lease-set are how I2P connects between clients.
+They contain data on how to connect to a particular tunnel and metadata around that connection.
+The core piece of data stored in lease-sets are [https://geti2p.net/spec/common-structures#destination][destinations], or I2P's address type.
+
+* Why use Encrypted Lease-sets?
+** Completely Private Services
+If you properly setup an encrypted lease-set, its the most private way to connect 2 machines over the internet.
+There is no reasonable way to guess the actual destination behind the hashed key that is stored in the network db.
+Obviously, all these statements assume that there are no vulnerabilities in the implementation of the specification.
+I am not equipped to audit either I2P or I2PD, but I do generally trust these implementations.
+
+* How to use Encrypted Lease-sets
+** General
+You will first need something you want to host.
+It can be pretty much anything, but I will use an SSH server as my example, because it is my test case.
+I am looking to setup an rsync server over I2P [file:rsync-over-i2p.org][]
+The main constraints behind hosting something through I2P is first latency and a fairly far second, throughput. 
+By the design of the network itself, anything that is heavily effected by latency will be hurt by being run through I2P.
+I do read a post about running video-chat apps through Tor, and it claimed it wasn't terrible. ?FIND LINK TO POST?
+
+** Options
+*** Hop ?Length?
+By default, I2P uses 3 hops each way for a connection, so 6 per round trip.
+For my use-case, I am dropping that down to 2 per connection for a few reasons.
+The main reason is that SSH is pretty heavily latency-?bound?, so the reduced round-trips are valuable.
+The other reason is that in my particular instance I am not concerned about the reduction in anonymity.
+I am not deeply concerned if a malevolent actor finds out I am accessing machines I own through SSH.
+If I was doing something riskier, I would definitely keep the 3 hops and would even consider increasing it to 4 hops per connection.
+
+** Examples
+#+NAME: I2PD
+#+BEGIN_SRC conf
+[encrypted]
+type=http
+host=127.0.0.1
+port=80
+inport=80
+gzip=false
+# Stated that this is the only correct key-type option
+signaturetype=11
+keys=encrypted.dat
+# This is the setting that actually marks the lease-set as encrypted
+i2cp.leaseSetType=5
+#+END_SRC
+
+** Constraints
+*** Only for Server Tunnels of particular types
+Can only have 'server', 'http' or 'irc' types
+I don't know the technical reason behind this
+
+*** Potentially having your Connection be Blocked 
+I am aware the that the first ?3? packets that I2P sends are 'static/always the same', so theoretically networks can block I2P connections.
+I personally haven't had it happen to me, but here's a warning.
+
+* Links
+- [https://geti2p.net/en/blog/post/2021/09/07/Level-Up-Encrypted-Leasesets][Post on I2P Blog]
+- [https://habr.com/ru/post/555604/][Write-Up in Russian]
+- [https://github.com/PurpleI2P/i2pd/wiki/Publish-encrypted-LeaseSet][I2PD Docs]
+- [https://geti2p.net/en/docs/how/network-database][Core doc on the NetDB]
+- [https://geti2p.net/spec/proposals/123-new-netdb-entries][I2P Proposal were the current version of Encrypted Lease-sets was introduced]

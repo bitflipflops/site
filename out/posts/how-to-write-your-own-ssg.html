@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="generator" content="pandoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-  <title>Why did I write my own Static Site Generator</title>
+  <title>How to Write your own Static Site Generator</title>
   <style>
     code{white-space: pre-wrap;}
     span.smallcaps{font-variant: small-caps;}
@@ -23,32 +23,41 @@
 <body>
 
 <header id="title-block-header">
-<h1 class="title">Why did I write my own Static Site Generator</h1>
+<h1 class="title">How to Write your own Static Site Generator</h1>
 </header>
 <nav id="TOC" role="doc-toc">
 <ul>
-<li><a href="#philisophical-reasons">Philisophical Reasons</a></li>
-<li><a href="#practical-reasons">Practical Reasons</a></li>
+<li><a href="#core">Core</a>
+<ul>
+<li><a href="#transforming-some-markup-syntax-into-html">Transforming some markup syntax into HTML</a></li>
+<li><a href="#syncing-to-remote">Syncing to Remote</a></li>
+</ul></li>
+<li><a href="#particular-hosting-providers">Particular Hosting Providers</a>
+<ul>
+<li><a href="#netlify">Netlify</a></li>
+<li><a href="#github-pages">GitHub Pages</a></li>
+</ul></li>
+<li><a href="#extras">Extras</a>
+<ul>
+<li><a href="#automatic-dns">Automatic DNS</a></li>
+<li><a href="#automatic-github-pages">Automatic Github Pages</a></li>
+</ul></li>
 </ul>
 </nav>
-<h1 id="philisophical-reasons">Philisophical Reasons</h1>
-<ul>
-<li><p>It does exactly what I want, and nothing more</p>
-<p>Its not that any of the one&#39;s I&#39;ve tried are bad, just not what I want. There are so many features I have no need of. I&#39;ve used <a href="https://gohugo.io/">Hugo</a> in the past, and it worked just fine, but it still felt like so much more than I needed.</p></li>
-<li><p>Fun</p>
-<p>It was small, straightforward task. It had a nice, clearly defined end goal.</p></li>
-</ul>
-<h1 id="practical-reasons">Practical Reasons</h1>
-<ul>
-<li><p>I wanted each page to be completely standalone, or 1 network request per page</p>
-<p>That means to me that each page stores its own CSS Why do this you ask? Mainly because it seemed like a fun idea; its completely possible I will cheat on this in the future For this purpose, I also embed my incredible favicon as a data URI It just means you convert the binary image file into a Base64 encoded string and reference it in the url</p></li>
-<li><p>Very simple templating</p>
-<p>I want a generic footer and header for posts and that&#39;s pretty much it I don&#39;t want anything else</p></li>
-<li><p>Custom linting</p>
-<p>I like to have rather strict formatting</p></li>
-<li><p>Format agnostic</p>
-<p>I use <a href="https://pandoc.org">Pandoc</a> to convert between file formats. I generally prefer to use org-mode, but it also works with markdown and many other formats It can also ?normalize? an HTML file, so I can just write a custom HTML file if I want to do some unique formatting for a particular article</p></li>
-</ul>
+<h1 id="core">Core</h1>
+<h2 id="transforming-some-markup-syntax-into-html">Transforming some markup syntax into HTML</h2>
+<p>I generally use [<a href="https://orgmode.org/">https://orgmode.org/</a>][Org-Mode] for posts, but I also want to be able to use full HTML sometimes. So I use [<a href="https://pandoc.org/">https://pandoc.org/</a>][Pandoc], an excellent programs, that transforms many different markup formats into other markup formats. It also has the ability to &quot;transform&quot; HTML into HTML as formatted by Pandoc. So, I can just run HTML through the same steps as I do for my other markup formats and get the same effects. This mainly helps me because I embed CSS directly in each page. I don&#39;t want there to be any of the janky half-second of an unstyled page when its loading a separate CSS file.</p>
+<h2 id="syncing-to-remote">Syncing to Remote</h2>
+<p>I am using Git, because its decentralized and version-controlled. I am not using much of the version controlling features, but I do want the ability to roll back changes.</p>
+<h1 id="particular-hosting-providers">Particular Hosting Providers</h1>
+<h2 id="netlify">Netlify</h2>
+<h2 id="github-pages">GitHub Pages</h2>
+<p><a href="https://docs.github.com/en/rest/reference/pages">https://docs.github.com/en/rest/reference/pages</a></p>
+<h1 id="extras">Extras</h1>
+<h2 id="automatic-dns">Automatic DNS</h2>
+<p>This is one of the harder things, because it has multiple external systems it needs to interact with. I am currently moving all of my domains to [<a href="https://porkbun.com/">https://porkbun.com/</a>][Porkbun], because I&#39;ve had some moderately bad experiences with other domain registrars. They have a beta API that I am looking into using it to automate setup.</p>
+<h2 id="automatic-github-pages">Automatic Github Pages</h2>
+<p>I added a build step that hardlinks all files from the out dir to a docs dir For whatever reason, docs and root are the only directory options for Github pages You could use a set publish branch, but I don&#39;t really want to use git that way. I am also planning on automating adding it as a fallback/another record.</p>
 <footer>
   <div>I am the default footer</div>
 </footer>

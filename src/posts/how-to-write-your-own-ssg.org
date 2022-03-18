@@ -1,0 +1,32 @@
+#+TITLE: How to Write your own Static Site Generator
+
+* Core
+** Transforming some markup syntax into HTML
+I generally use [https://orgmode.org/][Org-Mode] for posts, but I also want to be able to use full HTML sometimes.
+So I use [https://pandoc.org/][Pandoc], an excellent programs, that transforms many different markup formats into other markup formats.
+It also has the ability to "transform" HTML into HTML as formatted by Pandoc.
+So, I can just run HTML through the same steps as I do for my other markup formats and get the same effects.
+This mainly helps me because I embed CSS directly in each page.
+I don't want there to be any of the janky half-second of an unstyled page when its loading a separate CSS file.
+
+** Syncing to Remote
+I am using Git, because its decentralized and version-controlled.
+I am not using much of the version controlling features, but I do want the ability to roll back changes.
+
+* Particular Hosting Providers
+** Netlify
+
+** GitHub Pages
+https://docs.github.com/en/rest/reference/pages
+
+* Extras
+** Automatic DNS
+This is one of the harder things, because it has multiple external systems it needs to interact with.
+I am currently moving all of my domains to [https://porkbun.com/][Porkbun], because I've had some moderately bad experiences with other domain registrars.
+They have a beta API that I am looking into using it to automate setup.
+
+** Automatic Github Pages
+I added a build step that hardlinks all files from the out dir to a docs dir
+For whatever reason, docs and root are the only directory options for Github pages
+You could use a set publish branch, but I don't really want to use git that way.
+I am also planning on automating adding it as a fallback/another record.
